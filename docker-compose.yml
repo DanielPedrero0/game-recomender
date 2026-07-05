@@ -1,0 +1,67 @@
+
+
+services:
+
+  game-db:
+    image: postgres:15
+    container_name: game_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: gamedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - game_db_data:/var/lib/postgresql/data
+    networks:
+      - game-network
+
+  recommender-db:
+    image: postgres:15
+    container_name: recommender_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: recdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - recommender_db_data:/var/lib/postgresql/data
+    networks:
+      - game-network
+
+  game-service:
+    build: ./game-service
+    container_name: game_service
+    ports:
+      - "8001:8001"
+    environment:
+      DATABASE_URL: postgresql://gameuser:gamepass@game-db:5432/gamedb
+    depends_on:
+      - game-db
+    networks:
+      - game-network
+
+  recommender-service:
+    build: ./recommender-service
+    container_name: recommender_service
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://recuser:recpass@recommender-db:5432/recdb
+      GAME_SERVICE_URL: http://game-service:8001
+    depends_on:
+      - recommender-db
+      - game-service
+    networks:
+      - game-network
+
+networks:
+  game-network:
+    driver: bridge
+
+volumes:
+  game_db_data:
+  recommender_db_data:

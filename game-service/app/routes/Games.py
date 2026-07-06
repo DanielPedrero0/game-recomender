@@ -55,7 +55,7 @@ def delete_game(game_id : int , db : Session= Depends(getdb)):
     if not game:
         raise HTTPException(status_code = 401, detail = "Juego no encontrado")
     db.delete(game)
-    db.commit
+    db.commit()
 
 
 def search_game (game_id : int , db : Session = Depends(getdb)):

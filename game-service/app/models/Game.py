@@ -1,14 +1,8 @@
-import enum
 from sqlalchemy import Integer, Column, String, Enum, Float
 from app.database.Session import Base
-from app.schema.Game import GameCreated, GameUpdated, GameResponse
+from app.schema.Game import GameStatus, GameCreated, GameUpdated, GameResponse
 
-class GameStatus(str, enum.Enum):
-    jugando = "jugando"
-    completado = "completado"
-    pendiente = "pendiente"
-    abandonado = "abandonado"
-
+#Tabla de juegos bbdd
 class Game(Base):
     __tablename__= "games"
     id = Column(Integer, primary_key=True, index=True)
@@ -18,4 +12,3 @@ class Game(Base):
     status = Column(Enum(GameStatus), default=GameStatus.pendiente)
     rating = Column(Float, nullable=True)
     igdb_id = Column(Integer, nullable=True)
-

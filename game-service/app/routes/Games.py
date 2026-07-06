@@ -16,7 +16,7 @@ def search_game (game_id : int , db : Session) -> Game:
 
 #Añadir un juego
 @router.post("/" , response_model = GameResponse , status_code = 201)
-def add_game (game : GameCreated, db : Session = Depends(getdb)):
+async def add_game (game : GameCreated, db : Session = Depends(getdb)):
     db_game = Game(**game.model_dump())
     db.add(db_game)
     db.commit()
@@ -25,7 +25,7 @@ def add_game (game : GameCreated, db : Session = Depends(getdb)):
 
 #Filtrar juegos
 @router.post("/", response_model = List[GameResponse])
-def get_games(status : str = None, genre : str = None, db : Session = Depends(getdb)):
+async def get_games(status : str = None, genre : str = None, db : Session = Depends(getdb)):
     game = db.query(Game)
     if status:
        query = query.filter(Game.status == status)
@@ -35,12 +35,12 @@ def get_games(status : str = None, genre : str = None, db : Session = Depends(ge
        
 #Obtener juego mediante ID
 @router.get("/{game_id}" , response_model = GameResponse)
-def get_game_id(game_id : int = None, db : Session = Depends(getdb)):
+async def get_game_id(game_id : int = None, db : Session = Depends(getdb)):
     return search_game(game_id, db)
     
 #Actualizar Juego
 @router.patch("/{game_id}" , response_model = GameResponse)
-def update_game(game_id : int , db : Session = Depends (getdb)):
+async def update_game(game_id : int , db : Session = Depends (getdb)):
     game = search_game(game_id, db)
     for key,value in update.model_dump(exclude_unset = True).items():
         setattr(game, key, value)
@@ -48,11 +48,21 @@ def update_game(game_id : int , db : Session = Depends (getdb)):
     db.refresh(game)
     return game
 
+
 #Eliminar Juego
 @router.delete("/{game_id}", status_code = 204)
-def delete_game(game_id : int , db : Session= Depends(getdb)):
+async def delete_game(game_id : int , db : Session= Depends(getdb)):
     game =  search_game(game_id, db)
     db.delete(game)
     db.commit()
 
 
+#Obtener todos los juegos
+@router.get("/" , response_model=List[GameResponse])
+async def get_games(status: str = None , genre : str = None , db : Session = Depends(getdb)):
+    query = db.query(Game)
+    if status:
+        query = query.filter(Game.status == status)
+    if genre:
+        query = query.filter(Game.genre == genre)
+    return query.all()

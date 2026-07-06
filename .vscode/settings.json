@@ -1,0 +1,6 @@
+{
+  "github.copilot.enable": false,
+  "github.copilot.inlineSuggest.enable": false,
+  "github.copilot.showWelcomeMessage": false,
+  "githubPullRequests.enabled": false
+}

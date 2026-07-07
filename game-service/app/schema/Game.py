@@ -21,8 +21,9 @@ class GameCreated(BaseModel):
 class GameUpdated(BaseModel):
     status : Optional[GameStatus] = None
     rating: Optional[float] = Field(None, ge=1, le=10)
+    genre: Optional[str] = None
 #Respuesta de juegos
-class GameResponse(BaseModel):
+class GameResponse(GameCreated):
     id : int
     
     class Config:

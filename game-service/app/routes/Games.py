@@ -35,7 +35,7 @@ async def get_games(status : str = None, genre : str = None, db : Session = Depe
        
 #Obtener juego mediante ID
 @router.get("/{game_id}" , response_model = GameResponse)
-async def get_game_id(game_id : int = None, db : Session = Depends(getdb)):
+async def get_game_id(game_id : int = None,db : Session = Depends(getdb)):
     return search_game(game_id, db)
     
 #Actualizar Juego

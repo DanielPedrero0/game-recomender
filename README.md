@@ -5,6 +5,6 @@ Para conectarse al fronend:
 http://localhost:8501
 
 Importante añadir el .env con 
-          IGDB_CLIENT_ID = 
-          IGDB_CLIENT_SECRET = 
+         // IGDB_CLIENT_ID = 
+         // IGDB_CLIENT_SECRET = 
 

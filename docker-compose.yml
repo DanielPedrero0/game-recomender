@@ -60,7 +60,18 @@ services:
       - game-service
     networks:
       - game-network
-
+  
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "8501:8501"
+    depends_on:
+      - game-service
+      - recommender-service
+    networks:
+      - game-network
+      
 networks:
   game-network:
     driver: bridge
@@ -68,3 +79,4 @@ networks:
 volumes:
   game_db_data:
   recommender_db_data:
+

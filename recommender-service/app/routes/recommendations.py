@@ -1,5 +1,5 @@
-from fastapi import APIRouter
-from app.services.igdb import get_favorite_genre, genre_recommendation
+from fastapi import APIRouter, HTTPException
+from app.services.igdb import get_favorite_genre, genre_recommendation, fetch_recommendations
 
 router = APIRouter(
     prefix="/recommendations",
@@ -8,27 +8,26 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_recommendation():
+async def get_recommendation(genre:str = None):
     try:
         genres = await get_favorite_genre()
-    except Exception:
-        genres = []
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"No se pudo conectar con game-service: {str(e)}")
 
     if not genres:
         return {
-            "message": "Aun no tienes juegos completados.",
-            "based_on_genres": [],
+            "message": "Aún no tienes juegos completados.",
             "recommendations": []
         }
 
-    try:
-        recommendation = await genre_recommendation(genres)
-    except Exception:
-        recommendation = []
+    
+    genre_to_use = [genre] if genre else genres
+
+    recommendations = await fetch_recommendations(genre_to_use)
 
     return {
-        "based_on_genres": genres,
-        "recommendations": recommendation
+        "based_on_genres": genre_to_use,
+        "recommendations": recommendations
     }
 
 

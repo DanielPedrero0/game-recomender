@@ -66,3 +66,10 @@ async def get_games(status: str = None , genre : str = None , db : Session = Dep
     if genre:
         query = query.filter(Game.genre == genre)
     return query.all()
+
+
+@router.get("/genres/top", response_model=List[str])
+async def get_favourite_genres(db: Session = Depends(getdb)):
+    games = db.query(Game).filter(Game.status == "completado").all()
+    genres = [g.genre for g in games]
+    return sorted(set(genres), key=lambda g: genres.count(g), reverse=True)

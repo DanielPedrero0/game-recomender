@@ -1,5 +1,5 @@
 import os
-import httxp
+import httpx
 
 IGDB_CLIENT_ID = os.getenv("IGDB_CLIENT_ID", "")
 IGDB_CLIENT_SECRET = os.getenv("IGDB_CLIENT_SECRET", "")
@@ -11,7 +11,7 @@ async def get_token_igdb() -> str:
     if token_cache["token"]:
         return token_cache["token"]
     
-    async with httxp.AsyncClient() as client:
+    async with httpx.AsyncClient() as client:
         response = await client.post(
             "https://id.twitch.tv/oauth2/token",
             data={
@@ -30,7 +30,7 @@ async def get_favorite_genre() -> list[str]:
         response.raise_for_status()
         return response.json()
     
-async def genre_recomendation(genres : list[str]) -> list[dict]:
+async def genre_recommendation(genres: list[str]) -> list[dict]:
     if not genres:
         return[]
     token = await get_token_igdb()
